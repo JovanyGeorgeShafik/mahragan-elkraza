@@ -71,7 +71,7 @@ func main() {
 	router.SetTrustedProxies([]string{"localhost"})
 	configCors := cors.Config{}
 	configCors.AllowOrigins = []string{
-		"https://mahragan.leapcell.app.dev"}
+		"https://mahragan.leapcell.app"}
 	configCors.AllowMethods = []string{"*"}
 	configCors.AllowHeaders = []string{"*"}
 	configCors.AllowCredentials = true
