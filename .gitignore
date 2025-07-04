@@ -1,2 +1,4 @@
 .env
 front
+# Local Netlify folder
+.netlify

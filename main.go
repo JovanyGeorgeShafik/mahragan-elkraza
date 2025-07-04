@@ -9,11 +9,12 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/joho/godotenv"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -32,10 +33,11 @@ type User struct {
 	ID        uint      `json:"id" gorm:"primaryKey"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateAt:true"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateAt:true"`
-	Email     string    `json:"email" form:"email" gorm:"unique"`
-	Password  string    `json:"password" form:"password"`
-	IsAdmin   bool      `json:"is_admin" form:"is_admin"`
-	IsVoted   bool      `json:"is_voted" form:"is_voted"`
+
+	Email    string `json:"email" form:"email" gorm:"unique"`
+	Password string `json:"password" form:"password"`
+	IsAdmin  bool   `json:"is_admin" form:"is_admin"`
+	IsVoted  bool   `json:"is_voted" form:"is_voted"`
 }
 type CreateDesignDto struct {
 	Author      string `json:"author" form:"author" binding:"required"`
@@ -43,11 +45,15 @@ type CreateDesignDto struct {
 	Description string `json:"description" form:"description" binding:"required"`
 }
 
-var SECRET_KEY string = os.Getenv("SECRET_KEY")
-
+func secretKey() string {
+	var SECRET_KEY string = os.Getenv("SECRET_KEY")
+	return SECRET_KEY
+}
 func main() {
 
-	db, err := gorm.Open(postgres.Open(os.Getenv("DSN")), &gorm.Config{})
+	err := godotenv.Load(".env")
+	secretKey()
+	db, err := gorm.Open(mysql.Open(os.Getenv("DSN")), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 		panic("failed to connect database")
@@ -67,6 +73,7 @@ func main() {
 			IsAdmin:  true,
 		})
 	}
+	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 	router.SetTrustedProxies([]string{"localhost"})
 	configCors := cors.Config{}
@@ -299,7 +306,7 @@ func login(email string, password string, db *gorm.DB) (string, error) {
 		"iat": time.Now().Unix(),
 		"aud": role,
 	}
-	jwt, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(SECRET_KEY))
+	jwt, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secretKey()))
 	if err != nil {
 		return "", errors.New("there is error in signing jwt")
 	}
@@ -341,7 +348,7 @@ func isAdminAuthenticate(c *gin.Context) {
 
 func verifyToken(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-		return []byte(SECRET_KEY), nil
+		return []byte(secretKey()), nil
 	})
 	if err != nil {
 
@@ -355,7 +362,7 @@ func verifyToken(tokenString string) (*jwt.Token, error) {
 
 func isAdmin(tokenString string) (string, error) {
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-		return []byte(SECRET_KEY), nil
+		return []byte(secretKey()), nil
 	})
 	if err != nil {
 
@@ -375,7 +382,7 @@ func isAdmin(tokenString string) (string, error) {
 
 func getSubject(tokenString string) (string, error) {
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-		return []byte(SECRET_KEY), nil
+		return []byte(secretKey()), nil
 	})
 	if err != nil {
 
@@ -392,7 +399,7 @@ func getSubject(tokenString string) (string, error) {
 
 func getRole(tokenString string) (string, error) {
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-		return []byte(SECRET_KEY), nil
+		return []byte(secretKey()), nil
 	})
 	if err != nil {
 

@@ -1,0 +1,26 @@
+plugins = []
+headers = []
+redirects = []
+
+[functions]
+
+[functions."*"]
+
+[build]
+publish = "C:\\Users\\Administrator\\m"
+publishOrigin = "default"
+command="go build main.go&&.\\main"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+publish="C:\\Users\\Administrator\\m\\images"
+[build.processing.js]
+
+[build.services]
