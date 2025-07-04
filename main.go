@@ -51,7 +51,7 @@ func secretKey() string {
 }
 func main() {
 
-	err := godotenv.Load(".env")
+	// err := godotenv.Load(".env")
 	secretKey()
 	db, err := gorm.Open(mysql.Open(os.Getenv("DSN")), &gorm.Config{})
 	if err != nil {
