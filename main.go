@@ -52,7 +52,7 @@ func main() {
 
 	// err := godotenv.Load(".env")
 	secretKey()
-	db, err := gorm.Open(postgres.Open(os.Getenv("DSN")), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(os.Getenv("DSN")), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 		panic("failed to connect database")
