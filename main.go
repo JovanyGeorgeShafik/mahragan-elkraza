@@ -10,7 +10,6 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -75,7 +74,7 @@ func main() {
 	}
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
-	router.SetTrustedProxies([]string{"localhost"})
+	router.SetTrustedProxies([]string{"localhost", "https://mahragan.leapcell.app"})
 	configCors := cors.Config{}
 	configCors.AllowOrigins = []string{
 		"https://mahragan.leapcell.app"}
